@@ -84,38 +84,31 @@ export default function CameraScreen() {
                         <Text style={styles.modalTitle}>PELÍCULA ENCONTRADA</Text>
 
                         <View style={{ width: '100%', marginBottom: 20 }}>
-                            {scannedData?.titulo ? (
-                                <>
-                                    <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginBottom: 10 }}>
-                                        {scannedData.titulo}
-                                    </Text>
+                            {/* 1. TÍTULO: Muestra el título o un texto por defecto */}
+                            <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginBottom: 10 }}>
+                                {scannedData?.titulo || scannedData?.title || scannedData?.name || "Película Escaneada"}
+                            </Text>
 
-                                    {scannedData.anio && (
-                                        <Text style={{ fontSize: 16, textAlign: 'center', color: '#555' }}>
-                                            Año: {scannedData.anio}
-                                        </Text>
-                                    )}
+                            {scannedData?.anio && (
+                                <Text style={{ fontSize: 16, textAlign: 'center', color: '#555' }}>
+                                     Año: {scannedData.anio}
+                                </Text>
+                            )}
 
-                                    {scannedData.director && (
-                                        <Text style={{ fontSize: 16, textAlign: 'center', color: '#555' }}>
-                                            Director: {scannedData.director}
-                                        </Text>
-                                    )}
+                            {scannedData?.director && (
+                                <Text style={{ fontSize: 16, textAlign: 'center', color: '#555' }}>
+                                     Director: {scannedData.director}
+                                </Text>
+                            )}
 
-                                    {scannedData.descripcion && (
-                                        <Text style={{ fontSize: 14, textAlign: 'center', marginTop: 10, fontStyle: 'italic' }}>
-                                           Descripcion: {scannedData.descripcion}
-                                        </Text>
-                                    )}
-                                </>
-                            ) : (
-                                <Text style={styles.movieText}>
-                                    {JSON.stringify(scannedData, null, 2).replace(/[{}"]/g, '')}
+                            {scannedData?.descripcion && (
+                                <Text style={{ fontSize: 14, textAlign: 'center', marginTop: 10, fontStyle: 'italic' }}>
+                                   Descripcion: {scannedData.descripcion}
                                 </Text>
                             )}
                         </View>
 
-                        <Text style={styles.successMessage}>Guardado exitoso en Supabase</Text>
+                        <Text style={styles.successMessage}> Guardado exitoso en Supabase</Text>
 
                         <TouchableOpacity
                             style={styles.closeButton}
