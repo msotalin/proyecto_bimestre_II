@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { useRouter } from 'expo-router'; // <--- Usamos el router moderno
+import { useRouter } from 'expo-router';
 
 export default function HomeScreen() {
-    const router = useRouter(); // Activamos la navegación
+    const router = useRouter();
 
     return (
         <View style={styles.container}>
