@@ -84,7 +84,6 @@ export default function CameraScreen() {
                         <Text style={styles.modalTitle}>PELÍCULA ENCONTRADA</Text>
 
                         <View style={{ width: '100%', marginBottom: 20 }}>
-                            {/* 1. TÍTULO: Muestra el título o un texto por defecto */}
                             <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginBottom: 10 }}>
                                 {scannedData?.titulo || scannedData?.title || scannedData?.name || "Película Escaneada"}
                             </Text>
