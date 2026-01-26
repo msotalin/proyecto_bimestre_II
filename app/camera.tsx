@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Text, View, StyleSheet, Button, Modal, TouchableOpacity, Platform } from 'react-native';
 import { CameraView, useCameraPermissions, BarcodeScanningResult } from 'expo-camera';
 import { supabase } from '../Libreria/supabase';
+import {Image} from "expo-image";
 
 export default function CameraScreen() {
     const [permission, requestPermission] = useCameraPermissions();
@@ -85,24 +86,28 @@ export default function CameraScreen() {
 
                         <View style={{ width: '100%', marginBottom: 20 }}>
                             <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginBottom: 10 }}>
-                                {scannedData?.titulo || scannedData?.title || scannedData?.name || "Película Escaneada"}
+                                {scannedData?.id || scannedData?.title || scannedData?.overview || scannedData?.rating || scannedData?.poster ||  "Película Escaneada"}
                             </Text>
 
-                            {scannedData?.anio && (
-                                <Text style={{ fontSize: 16, textAlign: 'center', color: '#555' }}>
-                                     Año: {scannedData.anio}
+                            {scannedData?.title && (
+                                <Text style={{ fontSize: 16, textAlign: 'center', color: '#000000' }}>
+                                     Titulo: {scannedData.title}
+                                </Text>
+                            )}
+                            {scannedData?.poster && (
+                                <Image source={{ uri: scannedData.poster }} style={{width: 200, height: 200, alignSelf: 'center'}}/>
+
+                            )}
+
+                            {scannedData?.overview && (
+                                <Text style={{ fontSize: 16, textAlign: 'justify', color: '#555' }}>
+                                     Overview: {scannedData.overview}
                                 </Text>
                             )}
 
-                            {scannedData?.director && (
-                                <Text style={{ fontSize: 16, textAlign: 'center', color: '#555' }}>
-                                     Director: {scannedData.director}
-                                </Text>
-                            )}
-
-                            {scannedData?.descripcion && (
+                            {scannedData?.rating && (
                                 <Text style={{ fontSize: 14, textAlign: 'center', marginTop: 10, fontStyle: 'italic' }}>
-                                   Descripcion: {scannedData.descripcion}
+                                   Calificación: {scannedData.rating}
                                 </Text>
                             )}
                         </View>
