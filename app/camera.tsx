@@ -26,36 +26,52 @@ export default function CameraScreen() {
     const handleBarCodeScanned = async ({ type, data }: BarcodeScanningResult) => {
         setScanned(true);
 
-        let infoPelicula = data;
-        let datosObjeto: any = {};
+        let datosParaGuardar: any = {};
 
         try {
-            datosObjeto = JSON.parse(data);
-            infoPelicula = datosObjeto.titulo || data;
-            setScannedData(datosObjeto);
+            // Intentamos parsear el JSON del código de barras
+            const datosParseados = JSON.parse(data);
+            datosParaGuardar = {
+                id_movie: datosParseados.id || "",
+                title: datosParseados.titulo || "nigga",
+                overview: datosParseados.overview || "",
+                rating: datosParseados.rating || 0,
+                poster: datosParseados.poster || ""
+            };
         } catch (e) {
-            setScannedData({ titulo: data });
-            infoPelicula = data;
+            // Si no es un JSON, guardamos el texto plano en el título
+            datosParaGuardar = {
+                id_movie: "",
+                title: data,
+                overview: "",
+                rating: 0,
+                poster: ""
+            };
         }
 
+        // Actualizamos el estado para la UI
+        setScannedData(datosParaGuardar);
         setModalVisible(true);
 
         try {
             console.log("Guardando en supabase...");
+            // IMPORTANTE: Usamos 'datosParaGuardar', NO 'scannedData'
             const { error } = await supabase
-                .from('scans')
+                .from('history')
                 .insert({
-                    movie_name: infoPelicula,
+                    id_movie: datosParaGuardar.id,
+                    title: datosParaGuardar.title,
+                    overview: datosParaGuardar.overview,
+                    rating: datosParaGuardar.rating,
+                    poster: datosParaGuardar.poster,
                     device_id: Platform.OS
                 });
 
-            if (error) {
-                console.log("Error al guardar en supabase", error);
-            } else {
-                console.log("Guardado exitoso");
-            }
-        } catch (err) {
-            console.error("Error al guardar en supabase", err);
+            if (error) throw error;
+            console.log("Guardado exitoso");
+
+        } catch (e) {
+            console.error("Error al guardar en supabase:", e);
         }
     };
 
