@@ -32,8 +32,8 @@ export default function CameraScreen() {
             // Intentamos parsear el JSON del código de barras
             const datosParseados = JSON.parse(data);
             datosParaGuardar = {
-                id_movie: datosParseados.id || "",
-                title: datosParseados.titulo || "nigga",
+                id_movie: datosParseados.id_movie || "",
+                title: datosParseados.title || "Sin título",
                 overview: datosParseados.overview || "",
                 rating: datosParseados.rating || 0,
                 poster: datosParseados.poster || ""
@@ -59,7 +59,7 @@ export default function CameraScreen() {
             const { error } = await supabase
                 .from('history')
                 .insert({
-                    id_movie: datosParaGuardar.id,
+                    id_movie: datosParaGuardar.id_movie,
                     title: datosParaGuardar.title,
                     overview: datosParaGuardar.overview,
                     rating: datosParaGuardar.rating,
@@ -107,7 +107,7 @@ export default function CameraScreen() {
 
                             {scannedData?.title && (
                                 <Text style={{ fontSize: 16, textAlign: 'center', color: '#000000' }}>
-                                     Titulo: {scannedData.title}
+                                     ID: {scannedData.id_movie}
                                 </Text>
                             )}
                             {scannedData?.poster && (
@@ -117,7 +117,7 @@ export default function CameraScreen() {
 
                             {scannedData?.overview && (
                                 <Text style={{ fontSize: 16, textAlign: 'justify', color: '#555' }}>
-                                     Overview: {scannedData.overview}
+                                     Reseña: {scannedData.overview}
                                 </Text>
                             )}
 
