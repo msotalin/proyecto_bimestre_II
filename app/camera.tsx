@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Text, View, StyleSheet, Button, Modal, TouchableOpacity, Platform } from 'react-native';
 import { CameraView, useCameraPermissions, BarcodeScanningResult } from 'expo-camera';
 import { supabase } from '../Libreria/supabase';
@@ -10,6 +10,8 @@ export default function CameraScreen() {
     const [modalVisible, setModalVisible] = useState(false);
 
     const [scannedData, setScannedData] = useState<any>({});
+
+    const scanningLock = useRef(false);
 
     if (!permission) {
         return <View><Text>Cargando...</Text></View>;
@@ -24,12 +26,14 @@ export default function CameraScreen() {
     }
 
     const handleBarCodeScanned = async ({ type, data }: BarcodeScanningResult) => {
+        if (scanningLock.current) return;
+        scanningLock.current = true;
+
         setScanned(true);
 
         let datosParaGuardar: any = {};
 
         try {
-            // Intentamos parsear el JSON del código de barras
             const datosParseados = JSON.parse(data);
             datosParaGuardar = {
                 id_movie: datosParseados.id_movie || "",
@@ -39,7 +43,7 @@ export default function CameraScreen() {
                 poster: datosParseados.poster || ""
             };
         } catch (e) {
-            // Si no es un JSON, guardamos el texto plano en el título
+
             datosParaGuardar = {
                 id_movie: "",
                 title: data,
@@ -49,13 +53,11 @@ export default function CameraScreen() {
             };
         }
 
-        // Actualizamos el estado para la UI
         setScannedData(datosParaGuardar);
         setModalVisible(true);
 
         try {
             console.log("Guardando en supabase...");
-            // IMPORTANTE: Usamos 'datosParaGuardar', NO 'scannedData'
             const { error } = await supabase
                 .from('history')
                 .insert({
@@ -79,10 +81,10 @@ export default function CameraScreen() {
         <View style={styles.container}>
             <CameraView
                 style={StyleSheet.absoluteFillObject}
-                onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
-                barcodeScannerSettings={{
-                    barcodeTypes: ["qr"]
-                }}
+                onBarcodeScanned={
+                    !modalVisible && !scanned ? handleBarCodeScanned : undefined
+                }
+                barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
             />
 
             <View style={styles.overlay}>
@@ -94,7 +96,11 @@ export default function CameraScreen() {
                 animationType={"slide"}
                 transparent={true}
                 visible={modalVisible}
-                onRequestClose={() => setModalVisible(false)}
+                onRequestClose={() => {
+                    setModalVisible(false);
+                    setScanned(false);
+                    scanningLock.current = false;
+                }}
             >
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContent}>
@@ -135,6 +141,7 @@ export default function CameraScreen() {
                             onPress={() => {
                                 setModalVisible(false);
                                 setScanned(false);
+                                scanningLock.current = false;
                             }}
                         >
                             <Text style={styles.closeButtonText}>Cerrar y Escanear otro</Text>
